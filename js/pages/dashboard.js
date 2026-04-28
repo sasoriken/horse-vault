@@ -36,7 +36,7 @@ function _build(data) {
           <span>◈</span> Command Center
         </div>
         <div class="page-subtitle">
-          HAKONIWA VAULT ANALYTICS // ${meta.commit_hash ?? 'N/A'} // ${_fmtTime(meta.generated_at)}
+          GALLOPMETRICS // ${meta.commit_hash ?? 'N/A'} // ${_fmtTime(meta.generated_at)}
         </div>
       </div>
       <button class="paywall-btn" onclick="window._showPaywall()">
