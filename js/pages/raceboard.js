@@ -3,14 +3,17 @@
  */
 import { fetchData } from '../data.js';
 import { renderIndicators } from '../components/indicators.js';
+import { openCoverageModal, getRating } from '../components/coverage-modal.js';
 import { SURFACE_LABELS, CONDITION_LABELS, CLASS_ACCENT } from '../config.js';
+
+let _allRaces = [];
 
 export async function renderRaceboard(el) {
   el.innerHTML = `<div class="page-header"><div class="page-title">Loading...</div></div>`;
   const data  = await fetchData().catch(() => null);
-  const races = data?.races ?? [];
-  el.innerHTML = _buildPage(races);
-  _bindEvents(el);
+  _allRaces   = data?.races ?? [];
+  el.innerHTML = _buildPage(_allRaces);
+  _bindEvents(el, _allRaces);
 }
 
 function _buildPage(races) {
@@ -18,7 +21,7 @@ function _buildPage(races) {
     <div class="page-header">
       <div>
         <div class="page-title"><span>◉</span> Race Intelligence</div>
-        <div class="page-subtitle">AI PREDICTION MATRIX // ${races.length} RACES LOADED</div>
+        <div class="page-subtitle">AI PREDICTION MATRIX // ${races.length} RACES LOADED // 馬名クリックでカバレッジレポート</div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         <button class="paywall-btn" onclick="window._showPaywall()">
@@ -116,14 +119,19 @@ function _buildEntryTable(race) {
 
     const indHtml = renderIndicators(e.indicators, { compact: true });
 
+    const rating = getRating(e);
     return `
       <tr class="entry-row ${e.is_recommended ? 'recommended' : ''}"
           data-horse="${e.horse_name}">
         <td><span class="${numCls}">${e.horse_number ?? '?'}</span></td>
         <td>
-          <div style="font-weight:${e.is_recommended ? 700 : 400}">
-            ${e.horse_name}
-            ${e.is_recommended ? '<span class="badge badge-cyan" style="font-size:.58rem;margin-left:4px">◆ REC</span>' : ''}
+          <div style="font-weight:${e.is_recommended ? 700 : 400};display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span class="horse-name-link" style="cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(0,240,255,.4)"
+                  data-horse="${_esc(e.horse_name)}" data-race-id="${_esc(race.race_id)}">
+              ${_esc(e.horse_name)}
+            </span>
+            ${e.is_recommended ? '<span class="badge badge-cyan" style="font-size:.58rem">◆ REC</span>' : ''}
+            <span class="gm-rating-badge gm-rating-${rating.cls}" style="font-size:.55rem;padding:1px 5px">${rating.arrow}&nbsp;${rating.label}</span>
           </div>
           <div style="font-size:.68rem;color:var(--text-secondary)">${e.jockey ?? '—'}</div>
         </td>
@@ -199,7 +207,7 @@ function _buildPayoffs(payoffs) {
   `;
 }
 
-function _bindEvents(el) {
+function _bindEvents(el, allRaces) {
   // アコーディオン
   el.querySelectorAll('.race-card-header').forEach(header => {
     header.addEventListener('click', () => {
@@ -219,6 +227,20 @@ function _bindEvents(el) {
       });
     });
   }
+
+  // 馬名クリック → カバレッジレポートモーダル
+  el.addEventListener('click', e => {
+    const link = e.target.closest('.horse-name-link');
+    if (!link) return;
+    e.stopPropagation();
+    const horseName = link.dataset.horse;
+    const raceId    = link.dataset.raceId;
+    const race      = allRaces.find(r => r.race_id === raceId);
+    if (!race) return;
+    const entry = (race.entries ?? []).find(en => en.horse_name === horseName);
+    if (!entry) return;
+    openCoverageModal(horseName, entry, race, allRaces);
+  });
 }
 
 function _esc(str) {

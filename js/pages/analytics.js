@@ -108,6 +108,10 @@ function _buildPage(data, analytics) {
     <!-- ── Section 5: Odds Gap Analysis ── -->
     <div class="section-label">オッズギャップ分析</div>
     ${noAnalytics ? _emptyState() : _buildOddsGapTable(analytics.odds_gap_bins)}
+
+    <!-- ── Section 6: Correlation Matrix ── -->
+    <div class="section-label">指標間相関行列</div>
+    ${_buildCorrelationMatrix(data)}
   `;
 }
 
@@ -427,6 +431,112 @@ function _buildOddsGapTable(bins) {
 
 function _renderLrChart(canvasId, coefs) {
   // CSS描画で代替済み
+}
+
+// ── 指標間相関行列 ────────────────────────────────────────────────────────
+
+const _CORR_INDICATORS = [
+  { id: 'wasi',         label: 'WASI' },
+  { id: 'elo',          label: 'Elo' },
+  { id: 'hist_alpha',   label: 'HA' },
+  { id: 'growth',       label: 'GT' },
+  { id: 'reliability',  label: 'RBS' },
+  { id: 'oqs',          label: 'OQS' },
+  { id: 'si_best',      label: 'SI' },
+  { id: 'dist_fit',     label: 'DF' },
+  { id: 'surf_fit',     label: 'SF' },
+  { id: 'course_fit',   label: 'CF' },
+  { id: 'pacs',         label: 'PACS' },
+  { id: 'pace_fit',     label: 'PF' },
+  { id: 'momentum',     label: 'MOM' },
+  { id: 'fatigue',      label: 'FAT' },
+  { id: 'consistency',  label: 'CS' },
+  { id: 'bounce_back',  label: 'BBS' },
+  { id: 'jk_venue',     label: 'JVA' },
+  { id: 'pace_pressure',label: 'PPS' },
+  { id: 'score_v4',     label: 'V4' },
+];
+
+function _buildCorrelationMatrix(data) {
+  const races   = data?.races ?? [];
+  const entries = races.flatMap(r => r.entries ?? []);
+  if (entries.length < 10) return _emptyState();
+
+  // 各エントリの指標 norm 値マップ
+  function indMap(entry) {
+    const m = {};
+    for (const cat of Object.values(entry.indicators ?? {}))
+      for (const ind of cat) m[ind.id] = ind.norm;
+    return m;
+  }
+  const maps = entries.map(indMap);
+
+  // Pearson r 計算（有効ペアのみ）
+  function pearson(idA, idB) {
+    const pairs = maps.map(m => [m[idA], m[idB]]).filter(([a, b]) => a != null && b != null);
+    if (pairs.length < 10) return null;
+    const xs = pairs.map(p => p[0]), ys = pairs.map(p => p[1]);
+    const n  = xs.length;
+    const mx = xs.reduce((a, b) => a + b) / n;
+    const my = ys.reduce((a, b) => a + b) / n;
+    const cov = xs.reduce((s, x, i) => s + (x - mx) * (ys[i] - my), 0);
+    const sx  = Math.sqrt(xs.reduce((s, x) => s + (x - mx) ** 2, 0));
+    const sy  = Math.sqrt(ys.reduce((s, y) => s + (y - my) ** 2, 0));
+    return sx * sy === 0 ? 0 : cov / (sx * sy);
+  }
+
+  const ids = _CORR_INDICATORS.map(d => d.id);
+
+  const header = `<tr>
+    <th style="min-width:36px"></th>
+    ${_CORR_INDICATORS.map(d =>
+      `<th style="font-size:.52rem;min-width:30px;max-width:30px;text-align:center;padding:2px 1px;writing-mode:vertical-rl;white-space:nowrap;color:var(--text-muted)">${d.label}</th>`
+    ).join('')}
+  </tr>`;
+
+  const bodyRows = _CORR_INDICATORS.map(row => {
+    const cells = ids.map(colId => {
+      if (row.id === colId) {
+        return `<td style="width:30px;height:26px;background:rgba(255,255,255,.18);text-align:center;font-size:.5rem;font-family:var(--font-mono);padding:0">1.0</td>`;
+      }
+      const r = pearson(row.id, colId);
+      if (r === null) return `<td style="width:30px;height:26px;background:rgba(255,255,255,.02);padding:0"></td>`;
+      const abs   = Math.abs(r);
+      const isPos = r >= 0;
+      const alpha = Math.min(abs * 0.9, 0.85);
+      const bg    = isPos
+        ? `rgba(0,240,255,${alpha.toFixed(2)})`
+        : `rgba(255,0,60,${alpha.toFixed(2)})`;
+      const txt   = abs >= 0.25 ? (abs >= 0.5 ? '#fff' : 'rgba(255,255,255,.85)') : 'transparent';
+      return `<td title="${row.label}×${_CORR_INDICATORS.find(d=>d.id===colId)?.label}: r=${r.toFixed(2)}"
+                  style="width:30px;height:26px;background:${bg};text-align:center;font-size:.5rem;font-family:var(--font-mono);color:${txt};padding:0;cursor:default">
+                ${abs >= 0.25 ? r.toFixed(2) : ''}
+              </td>`;
+    }).join('');
+    return `<tr>
+      <td style="font-size:.55rem;font-family:var(--font-mono);color:var(--text-secondary);padding:0 4px 0 0;white-space:nowrap;text-align:right">${row.label}</td>
+      ${cells}
+    </tr>`;
+  }).join('');
+
+  return `
+    <div class="panel" style="margin-bottom:24px">
+      <div class="section-title">
+        <h3>指標間 Pearson 相関行列</h3>
+        <div class="st-line"></div>
+        <span class="badge badge-muted" style="font-size:.6rem">N=${entries.length} / シアン=正相関 マゼンタ=負相関 / セルホバーで値表示</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="border-collapse:collapse">
+          <thead>${header}</thead>
+          <tbody>${bodyRows}</tbody>
+        </table>
+      </div>
+      <div style="font-size:.62rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:10px">
+        ※ norm値（0-1、レース内min-max正規化）同士の線形相関。サンプル数&lt;10のセルは空白。
+      </div>
+    </div>
+  `;
 }
 
 // ── 統計ユーティリティ ────────────────────────────────────────────────────
