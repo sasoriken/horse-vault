@@ -1,0 +1,367 @@
+/* ── テーブル ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+.data-table th {
+  text-align: left;
+  padding: 6px 10px;
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.data-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  vertical-align: middle;
+}
+.data-table tbody tr:last-child td { border-bottom: none; }
+
+/* ── インジケーターバー ── */
+.ind-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ind-bar-track {
+  flex: 1;
+  height: 5px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.ind-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  min-width: 2px;
+}
+.ind-bar-val {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  min-width: 36px;
+  text-align: right;
+}
+
+/* バーの色 norm値によるグラデーション（CSS変数で制御） */
+.ind-bar-fill.color-ability  { background: linear-gradient(90deg, #0070ff, #00F0FF); }
+.ind-bar-fill.color-fit      { background: linear-gradient(90deg, #00a876, #00FF88); }
+.ind-bar-fill.color-form     { background: linear-gradient(90deg, #cc7700, #FFB800); }
+.ind-bar-fill.color-jockey   { background: linear-gradient(90deg, #8800cc, #CC44FF); }
+.ind-bar-fill.color-composite{ background: linear-gradient(90deg, #cc0044, #FF003C); }
+
+/* norm≥0.8 のときバーを強調 */
+.ind-bar-fill.high { box-shadow: 0 0 8px currentColor; }
+
+/* ── インジケーターグリッド ── */
+.ind-grid {
+  display: grid;
+  gap: 4px;
+}
+.ind-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 40px;
+  align-items: center;
+  gap: 6px;
+}
+.ind-label {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── バッジ ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  border: 1px solid currentColor;
+}
+.badge-cyan    { color: var(--cyan);    background: var(--cyan-dim); }
+.badge-green   { color: var(--green);   background: var(--green-dim); }
+.badge-amber   { color: var(--amber);   background: var(--amber-dim); }
+.badge-magenta { color: var(--magenta); background: var(--magenta-dim); }
+.badge-red     { color: var(--red);     background: var(--red-dim); }
+.badge-muted   { color: var(--text-secondary); background: rgba(255,255,255,0.05); }
+
+/* ── コンフィデンス スコアバー ── */
+.confidence-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.conf-track {
+  width: 60px;
+  height: 4px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.conf-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--green));
+  transition: width 0.6s var(--ease);
+}
+.conf-val {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--cyan);
+}
+
+/* ── アコーディオン（レースカード） ── */
+.race-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 14px;
+  background: var(--bg-panel);
+  backdrop-filter: blur(12px);
+  transition: border-color 0.2s;
+}
+.race-card:hover { border-color: var(--border-bright); }
+.race-card.expanded { border-color: var(--cyan); }
+
+.race-card-header {
+  padding: 14px 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  user-select: none;
+  position: relative;
+}
+.race-card-header::after {
+  content: '';
+  position: absolute;
+  right: 16px; top: 50%;
+  transform: translateY(-50%) rotate(0deg);
+  width: 0; height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid var(--text-muted);
+  transition: transform 0.2s;
+}
+.race-card.expanded .race-card-header::after {
+  transform: translateY(-50%) rotate(180deg);
+}
+.race-card-body {
+  display: none;
+  border-top: 1px solid var(--border);
+  overflow-x: auto;
+}
+.race-card.expanded .race-card-body { display: block; }
+
+.race-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 0.75rem;
+}
+
+/* ── Audit Trail ── */
+.audit-row {
+  display: grid;
+  grid-template-columns: 90px 70px 1fr 1fr 80px 60px 60px;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 0.8rem;
+  transition: background 0.15s;
+}
+.audit-row:hover { background: rgba(0,240,255,0.03); }
+.audit-row.header {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding-bottom: 6px;
+}
+
+.hit-icon { font-size: 0.9rem; }
+.hit-win  { color: var(--green); }
+.hit-miss { color: var(--red); }
+.hit-none { color: var(--text-muted); }
+
+.hash-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.04);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ── チャートコンテナ ── */
+.chart-wrap {
+  position: relative;
+  width: 100%;
+}
+
+/* ── ロック（ダミーペイウォール） ── */
+.paywall-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid var(--amber);
+  border-radius: var(--radius);
+  color: var(--amber);
+  font-size: 0.75rem;
+  background: var(--amber-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.paywall-btn:hover {
+  background: rgba(255,184,0,0.28);
+  box-shadow: 0 0 12px var(--amber-dim);
+}
+
+/* ── トースト通知 ── */
+#toast-container {
+  position: fixed;
+  bottom: 90px; right: 20px;
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+@media (min-width: 769px) { #toast-container { bottom: 24px; } }
+
+.toast {
+  padding: 12px 18px;
+  border-radius: var(--radius);
+  font-size: 0.8rem;
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  max-width: 320px;
+  animation: toast-in 0.3s var(--ease) both;
+  pointer-events: auto;
+}
+.toast.out { animation: toast-out 0.3s var(--ease) forwards; }
+.toast-amber {
+  border-color: var(--amber);
+  color: var(--amber);
+  background: rgba(255,184,0,0.08);
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes toast-out {
+  to { opacity: 0; transform: translateX(20px); }
+}
+
+/* ── セクションタイトル ── */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.section-title h2 { margin: 0; }
+.section-title .st-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+
+/* ── 空状態 ── */
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--text-muted);
+}
+.empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.empty-state p { font-size: 0.82rem; }
+
+/* ── ターミナルログ ── */
+.terminal-log {
+  background: #000;
+  border-radius: var(--radius);
+  border: 1px solid rgba(0,255,136,0.2);
+  padding: 14px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-terminal);
+  height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.terminal-log .tl-line {
+  padding: 1px 0;
+  opacity: 0.85;
+  line-height: 1.5;
+}
+.terminal-log .tl-time { color: var(--text-muted); margin-right: 8px; }
+.terminal-log .tl-info { color: var(--green); }
+.terminal-log .tl-warn { color: var(--amber); }
+.terminal-log .tl-sys  { color: var(--cyan); }
+
+/* ── グリッドレイアウト ── */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+@media (max-width: 960px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}
+
+/* ── 馬番バッジ ── */
+.horse-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* JRA 馬番カラー */
+.hn-1  { background:#fff;    color:#000; }
+.hn-2  { background:#000;    color:#fff; border:1px solid #555; }
+.hn-3  { background:#d30000; color:#fff; }
+.hn-4  { background:#05a;    color:#fff; }
+.hn-5  { background:#ffff00; color:#000; }
+.hn-6  { background:#008800; color:#fff; }
+.hn-7  { background:#ff6600; color:#fff; }
+.hn-8  { background:#ff99cc; color:#000; }
+.hn-9  { background:#fff;    color:#000; border:2px solid #d30000; }
+.hn-10 { background:#000;    color:#fff; border:2px solid #000; }
+.hn-11 { background:#d30000; color:#fff; border:2px solid #fff; }
+.hn-12 { background:#05a;    color:#fff; border:2px solid #fff; }
+.hn-13 { background:#ffff00; color:#000; border:2px solid #000; }
+.hn-14 { background:#008800; color:#fff; border:2px solid #fff; }
+.hn-15 { background:#ff6600; color:#fff; border:2px solid #fff; }
+.hn-16 { background:#ff99cc; color:#000; border:2px solid #000; }
+.hn-17 { background:#808080; color:#fff; }
+.hn-18 { background:#808080; color:#fff; }

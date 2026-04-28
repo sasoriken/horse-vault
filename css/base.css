@@ -1,0 +1,98 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 14px; scroll-behavior: smooth; }
+
+body {
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* スキャンライン背景 */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px,
+    rgba(0, 0, 0, 0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── レイアウト ── */
+#app {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 100dvh;
+}
+
+#sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+  overflow: hidden;
+}
+
+#main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-width: 0;
+  padding: 24px;
+}
+
+/* ── タイポグラフィ ── */
+h1, h2, h3 { font-weight: 700; letter-spacing: 0.02em; }
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.3rem; color: var(--cyan); }
+h3 { font-size: 1rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.1em; }
+
+.mono { font-family: var(--font-mono); }
+.label { font-size: 0.72rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.12em; }
+.value { font-family: var(--font-mono); }
+
+a { color: var(--cyan); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+button {
+  cursor: pointer;
+  font-family: var(--font-sans);
+  border: none;
+  background: none;
+}
+
+/* ── スクロールバー ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-bright); }
+
+/* ── ユーティリティ ── */
+.hidden { display: none !important; }
+.text-cyan    { color: var(--cyan); }
+.text-magenta { color: var(--magenta); }
+.text-amber   { color: var(--amber); }
+.text-green   { color: var(--green); }
+.text-red     { color: var(--red); }
+.text-muted   { color: var(--text-muted); }
+.text-secondary { color: var(--text-secondary); }
+.text-right   { text-align: right; }
+.text-center  { text-align: center; }
+
+/* ── レスポンシブ ── */
+@media (max-width: 768px) {
+  :root { --sidebar-w: 0px; }
+  #sidebar { transform: translateX(-220px); transition: transform 0.3s var(--ease); width: 220px; }
+  #sidebar.open { transform: translateX(0); }
+  #main { margin-left: 0; padding: 16px; padding-bottom: 80px; }
+}

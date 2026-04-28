@@ -1,0 +1,179 @@
+/* ── ブートシークエンス ── */
+#boot-screen {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+#boot-screen.fade-out {
+  animation: boot-fadeout 0.8s var(--ease) forwards;
+}
+
+.boot-terminal {
+  width: min(680px, 92vw);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+}
+
+.boot-logo {
+  margin-bottom: 32px;
+  text-align: center;
+}
+.boot-logo .logo-ascii {
+  color: var(--cyan);
+  font-size: 0.6rem;
+  line-height: 1.2;
+  text-shadow: var(--cyan-glow);
+  white-space: pre;
+}
+.boot-logo .logo-sub {
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+  margin-top: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.boot-lines { list-style: none; }
+.boot-lines li {
+  padding: 2px 0;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.25s, transform 0.25s;
+}
+.boot-lines li.visible {
+  opacity: 1;
+  transform: none;
+}
+.boot-lines .bl-prefix { color: var(--text-muted); }
+.boot-lines .bl-msg    { color: var(--text-secondary); }
+.boot-lines .bl-ok     { color: var(--green); font-weight: 600; }
+.boot-lines .bl-warn   { color: var(--amber); }
+.boot-lines .bl-grant  { color: var(--cyan); font-weight: 700; }
+
+.boot-cursor {
+  display: inline-block;
+  width: 8px; height: 1em;
+  background: var(--cyan);
+  margin-left: 4px;
+  vertical-align: text-bottom;
+  animation: blink 0.8s step-end infinite;
+}
+
+.boot-progress {
+  margin-top: 20px;
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  overflow: hidden;
+}
+.boot-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan), var(--magenta));
+  width: 0%;
+  transition: width 0.4s var(--ease);
+  box-shadow: 0 0 8px var(--cyan);
+}
+
+/* ── アニメーション ── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes boot-fadeout {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.04); pointer-events: none; }
+}
+
+@keyframes ticker-move {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 4px var(--green); }
+  50%       { box-shadow: 0 0 10px var(--green); opacity: 0.7; }
+}
+
+@keyframes pulse-bar {
+  0%, 100% { box-shadow: inset 0 0 8px var(--cyan); }
+  50%       { box-shadow: inset 0 0 18px var(--cyan), 0 0 8px var(--cyan); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes number-roll {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { text-shadow: 0 0 8px currentColor; }
+  50%       { text-shadow: 0 0 24px currentColor, 0 0 48px currentColor; }
+}
+
+@keyframes scan {
+  0%   { top: -100%; }
+  100% { top: 100%; }
+}
+
+/* ── Three.js キャンバス ── */
+#three-canvas {
+  width: 100%;
+  height: 280px;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+}
+#three-canvas canvas { display: block; }
+
+/* ── ページ遷移 ── */
+.page { animation: fade-in-up 0.35s var(--ease) both; }
+
+/* ── インジケーターバーアニメーション ── */
+.ind-bar-fill {
+  transform-origin: left;
+  animation: bar-grow 0.6s var(--ease) both;
+}
+@keyframes bar-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* ── パルスエフェクト（高信頼度） ── */
+.pulse-glow {
+  animation: glow-pulse 1.8s ease-in-out infinite;
+}
+
+/* ── スキャン効果（パネル） ── */
+.panel-scan::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 60px;
+  background: linear-gradient(180deg, transparent, rgba(0,240,255,0.04), transparent);
+  animation: scan 4s linear infinite;
+  pointer-events: none;
+}
+
+/* ── ナンバーカウンター ── */
+.count-up { display: inline-block; overflow: hidden; }
+.count-up span { display: inline-block; animation: number-roll 0.5s var(--ease) both; }
+
+/* ── テーブルロウホバー ── */
+tr.entry-row {
+  transition: background 0.15s;
+  cursor: pointer;
+}
+tr.entry-row:hover { background: rgba(0, 240, 255, 0.04); }
+tr.entry-row.recommended { background: rgba(0, 240, 255, 0.06); }
+tr.entry-row.recommended td:first-child { border-left: 2px solid var(--cyan); }

@@ -1,0 +1,21 @@
+{
+  "meta": {
+    "generated_at": "2026-04-28T21:35:04.663945+09:00",
+    "schema_version": "1",
+    "commit_hash": "a5a8f4a7",
+    "days_window": 60
+  },
+  "system_stats": {
+    "overall": {
+      "total_predicted": 0,
+      "with_results": 0,
+      "recommended_win_rate": 0.0,
+      "recommended_place_rate": 0.0,
+      "predicted_top1_win_rate": 0.0
+    },
+    "by_venue": [],
+    "time_series": []
+  },
+  "races": [],
+  "audit_log": []
+}

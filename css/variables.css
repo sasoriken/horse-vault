@@ -1,0 +1,45 @@
+:root {
+  /* ── カラーパレット ── */
+  --bg-void:        #060B14;
+  --bg-panel:       rgba(10, 16, 28, 0.82);
+  --bg-panel-hover: rgba(14, 22, 38, 0.92);
+  --bg-input:       rgba(0, 240, 255, 0.05);
+
+  --cyan:     #00F0FF;
+  --cyan-dim: rgba(0, 240, 255, 0.18);
+  --cyan-glow: 0 0 18px rgba(0, 240, 255, 0.45);
+
+  --magenta:     #FF003C;
+  --magenta-dim: rgba(255, 0, 60, 0.18);
+  --magenta-glow: 0 0 18px rgba(255, 0, 60, 0.45);
+
+  --amber:     #FFB800;
+  --amber-dim: rgba(255, 184, 0, 0.18);
+
+  --green:     #00FF88;
+  --green-dim: rgba(0, 255, 136, 0.18);
+
+  --red:       #FF4060;
+  --red-dim:   rgba(255, 64, 96, 0.18);
+
+  --text-primary:   #E8F0FF;
+  --text-secondary: #7A90B0;
+  --text-muted:     #3A4860;
+  --text-terminal:  #00FF88;
+
+  --border:       rgba(0, 240, 255, 0.15);
+  --border-bright: rgba(0, 240, 255, 0.45);
+
+  /* ── フォント ── */
+  --font-sans: 'Space Grotesk', 'Noto Sans JP', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* ── サイズ ── */
+  --sidebar-w: 220px;
+  --header-h:  52px;
+  --radius:    8px;
+  --radius-lg: 14px;
+
+  /* ── トランジション ── */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}

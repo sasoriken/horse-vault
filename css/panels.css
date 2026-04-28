@@ -1,0 +1,285 @@
+/* ── Glassmorphismパネル ── */
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan-dim), transparent);
+}
+
+.panel-sm  { padding: 14px 16px; }
+.panel-lg  { padding: 28px; }
+.panel-glow { box-shadow: var(--cyan-glow); }
+.panel-magenta::before { background: linear-gradient(90deg, transparent, var(--magenta-dim), transparent); }
+
+/* ── サイドバー ── */
+#sidebar {
+  background: rgba(6, 11, 20, 0.95);
+  border-right: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.sidebar-logo {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo h1 {
+  font-size: 1rem;
+  font-family: var(--font-mono);
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+.sidebar-logo .version {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  margin-top: 2px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 0;
+  list-style: none;
+}
+
+.sidebar-nav .nav-section {
+  padding: 8px 20px 4px;
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 20px;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  transition: all 0.2s;
+  border-left: 2px solid transparent;
+  text-decoration: none;
+}
+.sidebar-nav a:hover {
+  color: var(--text-primary);
+  background: var(--cyan-dim);
+  text-decoration: none;
+}
+.sidebar-nav a.active {
+  color: var(--cyan);
+  border-left-color: var(--cyan);
+  background: rgba(0, 240, 255, 0.07);
+}
+.sidebar-nav .nav-icon {
+  width: 16px;
+  text-align: center;
+  font-style: normal;
+}
+
+.sidebar-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+}
+.sidebar-footer .status-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  margin-right: 6px;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+.sidebar-footer .status-text {
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+/* ── KPIカード ── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(12px);
+  padding: 16px 18px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.kpi-card:hover { border-color: var(--border-bright); }
+.kpi-card .kpi-label {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+.kpi-card .kpi-value {
+  font-size: 1.9rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.kpi-card .kpi-unit {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-left: 4px;
+}
+.kpi-card .kpi-sub {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.kpi-card.accent-cyan .kpi-value  { color: var(--cyan); }
+.kpi-card.accent-green .kpi-value { color: var(--green); }
+.kpi-card.accent-amber .kpi-value { color: var(--amber); }
+.kpi-card.accent-magenta .kpi-value { color: var(--magenta); }
+
+/* ── ページヘッダー ── */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.page-header .page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.page-header .page-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  margin-top: 4px;
+}
+
+/* ── モバイル下部ナビ ── */
+#mobile-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(6, 11, 20, 0.97);
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  z-index: 200;
+}
+#mobile-nav .mobile-nav-inner {
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0;
+}
+#mobile-nav a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 12px;
+  color: var(--text-secondary);
+  font-size: 0.65rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+#mobile-nav a.active { color: var(--cyan); }
+#mobile-nav .nav-icon { font-size: 1.2rem; font-style: normal; }
+
+@media (max-width: 768px) {
+  #mobile-nav { display: block; }
+}
+
+/* ── ハンバーガー ── */
+#hamburger {
+  display: none;
+  position: fixed;
+  top: 12px; left: 12px;
+  z-index: 300;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  color: var(--cyan);
+  font-size: 1rem;
+}
+@media (max-width: 768px) { #hamburger { display: flex; } }
+
+/* ── ティッカーバー ── */
+#ticker-bar {
+  position: fixed;
+  top: 0; left: var(--sidebar-w); right: 0;
+  height: var(--header-h);
+  background: rgba(6, 11, 20, 0.9);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 0 16px;
+  gap: 12px;
+}
+#ticker-bar .ticker-live {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+#ticker-bar .ticker-scroll-wrap {
+  flex: 1;
+  overflow: hidden;
+  mask: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
+}
+#ticker-bar .ticker-scroll {
+  display: flex;
+  gap: 40px;
+  white-space: nowrap;
+  animation: ticker-move 40s linear infinite;
+}
+#ticker-bar .ticker-item {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#ticker-bar .ticker-item .tv { color: var(--cyan); font-weight: 600; }
+#ticker-bar .ticker-item .ts { color: var(--green); }
+#ticker-bar .ticker-item .tw { color: var(--magenta); }
+
+#main { margin-top: var(--header-h); }
+
+@media (max-width: 768px) {
+  #ticker-bar { left: 0; }
+}
