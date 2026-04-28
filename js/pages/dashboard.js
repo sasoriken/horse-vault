@@ -28,6 +28,7 @@ function _build(data) {
   const ts     = data?.system_stats?.time_series ?? [];
 
   const noData = !data || stats.total_predicted === 0;
+  const bench  = _computeBenchmarks(data);
 
   return `
     <div class="page-header">
@@ -74,6 +75,9 @@ function _build(data) {
       </div>
     </div>
 
+    <!-- ベンチマーク比較 -->
+    ${bench ? _buildBenchmarkPanel(stats, bench) : ''}
+
     <!-- 3D + ターミナル -->
     <div class="grid-2" style="margin-bottom:24px">
       <div class="panel panel-scan">
@@ -103,6 +107,67 @@ function _build(data) {
         ? `<div class="empty-state"><div class="empty-icon">📊</div><p>予測データが蓄積されると表示されます</p></div>`
         : `<div class="chart-wrap" style="height:220px"><canvas id="chart-timeseries"></canvas></div>`
       }
+    </div>
+  `;
+}
+
+function _computeBenchmarks(data) {
+  const races = data?.races ?? [];
+  if (!races.length) return null;
+  let totalField = 0, totalRaces = 0, favWins = 0, favN = 0;
+  for (const race of races) {
+    const entries = race.entries ?? [];
+    if (!entries.length) continue;
+    totalField += entries.length;
+    totalRaces++;
+    const withResult = entries.filter(e => e.actual_position != null);
+    if (!withResult.length) continue;
+    const fav = entries.find(e => e.popularity === 1);
+    if (fav && fav.actual_position != null) {
+      favN++;
+      if (fav.actual_position === 1) favWins++;
+    }
+  }
+  if (totalRaces === 0) return null;
+  return {
+    avgFieldSize:  totalField / totalRaces,
+    randomWinRate: totalRaces > 0 ? 1 / (totalField / totalRaces) : 1/15,
+    favWinRate:    favN > 0 ? favWins / favN : 0.33,
+  };
+}
+
+function _buildBenchmarkPanel(stats, bench) {
+  const model  = (stats.recommended_win_rate ?? 0) * 100;
+  const random = bench.randomWinRate * 100;
+  const fav    = bench.favWinRate * 100;
+  const maxV   = Math.max(model, random, fav, 1);
+  const n      = stats.with_results ?? 0;
+
+  const _row = (label, val, color, delta) => {
+    const dColor = delta > 0 ? 'var(--green)' : delta < 0 ? 'var(--magenta)' : 'var(--text-muted)';
+    return `
+      <div style="display:grid;grid-template-columns:150px 1fr 72px 72px;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+        <div style="font-size:.76rem;font-family:var(--font-mono);color:${color}">${label}</div>
+        <div class="ind-bar-track" style="height:6px">
+          <div style="height:6px;border-radius:3px;background:${color};width:${(val/maxV*100).toFixed(0)}%;transition:width .5s"></div>
+        </div>
+        <div class="mono" style="font-size:.82rem;color:${color};text-align:right">${val.toFixed(1)}%</div>
+        <div class="mono" style="font-size:.72rem;color:${dColor};text-align:right">
+          ${delta != null ? (delta > 0 ? '+' : '') + delta.toFixed(1) + 'pp' : '—'}
+        </div>
+      </div>`;
+  };
+
+  return `
+    <div class="panel" style="margin-bottom:24px">
+      <div class="section-title">
+        <h3>ベンチマーク比較</h3>
+        <div class="st-line"></div>
+        <span class="badge badge-muted" style="font-size:.6rem">N=${n}レース / 平均${bench.avgFieldSize.toFixed(1)}頭立て</span>
+      </div>
+      ${_row('▶ GallopMetrics', model, 'var(--cyan)', null)}
+      ${_row('◇ 市場1番人気', fav, 'var(--amber)', model - fav)}
+      ${_row('○ ランダム基準', random, 'var(--text-muted)', model - random)}
     </div>
   `;
 }
