@@ -7,6 +7,7 @@
 import { KEY_MAP } from './config.js';
 
 let _cache = null;
+let _analyticsCache = null;
 
 /**
  * data.json を取得してキャッシュする。
@@ -20,9 +21,22 @@ export async function fetchData() {
   return _cache;
 }
 
+/**
+ * analytics.json を取得してキャッシュする（バックテスト分析データ）。
+ * run_analysis.py 実行時に上書き更新される。
+ */
+export async function fetchAnalytics() {
+  if (_analyticsCache) return _analyticsCache;
+  const res = await fetch('./data/analytics.json');
+  if (!res.ok) throw new Error(`analytics fetch failed: ${res.status}`);
+  _analyticsCache = await res.json();
+  return _analyticsCache;
+}
+
 /** キャッシュをクリアして再フェッチさせる */
 export function invalidateCache() {
   _cache = null;
+  _analyticsCache = null;
 }
 
 // ── 将来の難読化バイナリ版 (コメントアウト) ───────────────────────────────

@@ -1,0 +1,620 @@
+{
+  "meta": {
+    "generated_at": "2026-04-28T22:42:15.637411+09:00"
+  },
+  "indicator_hitrates": [
+    {
+      "name": "AvgPos sameClass",
+      "n": 5984,
+      "spearman": 0.472,
+      "win_r1": 21.8,
+      "win_r2": 14.1,
+      "win_r3": 10.7,
+      "place_r1": 53.0,
+      "place_r2": 40.9,
+      "place_r3": 33.0,
+      "wide_12": 20.0,
+      "wide_23": 10.8,
+      "wide_13": 15.1
+    },
+    {
+      "name": "AvgPos 3races",
+      "n": 9155,
+      "spearman": 0.4217,
+      "win_r1": 21.2,
+      "win_r2": 15.4,
+      "win_r3": 12.2,
+      "place_r1": 50.0,
+      "place_r2": 42.3,
+      "place_r3": 36.0,
+      "wide_12": 19.4,
+      "wide_23": 12.8,
+      "wide_13": 15.7
+    },
+    {
+      "name": "Class Gap",
+      "n": 2908,
+      "spearman": 0.4058,
+      "win_r1": 20.4,
+      "win_r2": 14.4,
+      "win_r3": 11.6,
+      "place_r1": 49.0,
+      "place_r2": 40.7,
+      "place_r3": 34.5,
+      "wide_12": 17.5,
+      "wide_23": 11.1,
+      "wide_13": 14.6
+    },
+    {
+      "name": "Composite v1",
+      "n": 10312,
+      "spearman": 0.342,
+      "win_r1": 18.4,
+      "win_r2": 13.3,
+      "win_r3": 10.3,
+      "place_r1": 45.8,
+      "place_r2": 37.3,
+      "place_r3": 31.3,
+      "wide_12": 16.2,
+      "wide_23": 9.9,
+      "wide_13": 12.8
+    },
+    {
+      "name": "Composite v2",
+      "n": 10312,
+      "spearman": 0.3049,
+      "win_r1": 18.0,
+      "win_r2": 13.7,
+      "win_r3": 11.7,
+      "place_r1": 44.9,
+      "place_r2": 37.3,
+      "place_r3": 32.6,
+      "wide_12": 15.1,
+      "wide_23": 9.8,
+      "wide_13": 12.7
+    },
+    {
+      "name": "SpeedIndex bestSameCond",
+      "n": 8902,
+      "spearman": 0.2834,
+      "win_r1": 16.4,
+      "win_r2": 11.9,
+      "win_r3": 10.3,
+      "place_r1": 41.8,
+      "place_r2": 34.6,
+      "place_r3": 30.7,
+      "wide_12": 12.4,
+      "wide_23": 8.8,
+      "wide_13": 10.8
+    },
+    {
+      "name": "SurfaceFit",
+      "n": 9101,
+      "spearman": 0.2936,
+      "win_r1": 16.0,
+      "win_r2": 13.0,
+      "win_r3": 10.9,
+      "place_r1": 40.5,
+      "place_r2": 35.5,
+      "place_r3": 31.9,
+      "wide_12": 12.8,
+      "wide_23": 9.4,
+      "wide_13": 11.0
+    },
+    {
+      "name": "Elo Rating",
+      "n": 10312,
+      "spearman": 0.3126,
+      "win_r1": 15.3,
+      "win_r2": 12.7,
+      "win_r3": 10.4,
+      "place_r1": 41.5,
+      "place_r2": 35.0,
+      "place_r3": 31.1,
+      "wide_12": 13.0,
+      "wide_23": 9.2,
+      "wide_13": 11.0
+    },
+    {
+      "name": "DistanceFit",
+      "n": 8992,
+      "spearman": 0.2121,
+      "win_r1": 12.9,
+      "win_r2": 11.0,
+      "win_r3": 10.2,
+      "place_r1": 33.4,
+      "place_r2": 31.2,
+      "place_r3": 29.4,
+      "wide_12": 9.3,
+      "wide_23": 7.2,
+      "wide_13": 8.6
+    },
+    {
+      "name": "SpeedIndex avg3",
+      "n": 9155,
+      "spearman": 0.2199,
+      "win_r1": 12.8,
+      "win_r2": 10.8,
+      "win_r3": 10.1,
+      "place_r1": 32.9,
+      "place_r2": 30.5,
+      "place_r3": 29.6,
+      "wide_12": 9.1,
+      "wide_23": 7.1,
+      "wide_13": 7.9
+    },
+    {
+      "name": "SpeedIndex latest",
+      "n": 9155,
+      "spearman": 0.2209,
+      "win_r1": 12.2,
+      "win_r2": 10.9,
+      "win_r3": 10.8,
+      "place_r1": 31.1,
+      "place_r2": 30.7,
+      "place_r3": 29.9,
+      "wide_12": 8.4,
+      "wide_23": 7.7,
+      "wide_13": 7.8
+    },
+    {
+      "name": "CourseFit",
+      "n": 6501,
+      "spearman": 0.1965,
+      "win_r1": 12.0,
+      "win_r2": 11.1,
+      "win_r3": 10.0,
+      "place_r1": 31.7,
+      "place_r2": 31.3,
+      "place_r3": 29.8,
+      "wide_12": 8.4,
+      "wide_23": 7.8,
+      "wide_13": 7.5
+    },
+    {
+      "name": "Consistency",
+      "n": 7518,
+      "spearman": 0.0543,
+      "win_r1": 11.4,
+      "win_r2": 8.7,
+      "win_r3": 7.5,
+      "place_r1": 31.8,
+      "place_r2": 26.2,
+      "place_r3": 24.1,
+      "wide_12": 6.4,
+      "wide_23": 5.0,
+      "wide_13": 6.0
+    },
+    {
+      "name": "Sectional Speed",
+      "n": 9155,
+      "spearman": 0.1495,
+      "win_r1": 10.8,
+      "win_r2": 9.2,
+      "win_r3": 8.9,
+      "place_r1": 29.0,
+      "place_r2": 26.4,
+      "place_r3": 27.0,
+      "wide_12": 6.9,
+      "wide_23": 5.8,
+      "wide_13": 6.5
+    },
+    {
+      "name": "Pace Fit",
+      "n": 10312,
+      "spearman": 0.1022,
+      "win_r1": 10.3,
+      "win_r2": 9.6,
+      "win_r3": 9.3,
+      "place_r1": 29.1,
+      "place_r2": 27.2,
+      "place_r3": 26.8,
+      "wide_12": 6.8,
+      "wide_23": 6.3,
+      "wide_13": 6.5
+    },
+    {
+      "name": "JVA",
+      "n": 9769,
+      "spearman": 0.0979,
+      "win_r1": 10.1,
+      "win_r2": 11.7,
+      "win_r3": 11.5,
+      "place_r1": 24.6,
+      "place_r2": 29.0,
+      "place_r3": 29.9,
+      "wide_12": 5.9,
+      "wide_23": 7.1,
+      "wide_13": 5.9
+    },
+    {
+      "name": "Momentum Index",
+      "n": 7518,
+      "spearman": 0.1252,
+      "win_r1": 9.8,
+      "win_r2": 9.3,
+      "win_r3": 8.1,
+      "place_r1": 28.3,
+      "place_r2": 27.5,
+      "place_r3": 26.5,
+      "wide_12": 6.1,
+      "wide_23": 5.5,
+      "wide_13": 5.9
+    },
+    {
+      "name": "Pace Pressure",
+      "n": 10312,
+      "spearman": 0.0436,
+      "win_r1": 9.3,
+      "win_r2": 8.8,
+      "win_r3": 9.1,
+      "place_r1": 27.8,
+      "place_r2": 25.8,
+      "place_r3": 26.3,
+      "wide_12": 6.6,
+      "wide_23": 6.0,
+      "wide_13": 6.0
+    },
+    {
+      "name": "Optimal Rest",
+      "n": 10312,
+      "spearman": 0.1031,
+      "win_r1": 8.1,
+      "win_r2": 8.4,
+      "win_r3": 8.1,
+      "place_r1": 25.6,
+      "place_r2": 25.7,
+      "place_r3": 24.8,
+      "wide_12": 5.5,
+      "wide_23": 5.4,
+      "wide_13": 5.2
+    },
+    {
+      "name": "IndirectRating",
+      "n": 9149,
+      "spearman": 0.1732,
+      "win_r1": 7.9,
+      "win_r2": 7.8,
+      "win_r3": 7.5,
+      "place_r1": 23.5,
+      "place_r2": 23.9,
+      "place_r3": 23.4,
+      "wide_12": 5.0,
+      "wide_23": 4.6,
+      "wide_13": 4.5
+    },
+    {
+      "name": "Historical Alpha",
+      "n": 9155,
+      "spearman": -0.0213,
+      "win_r1": 5.3,
+      "win_r2": 5.7,
+      "win_r3": 5.7,
+      "place_r1": 18.2,
+      "place_r2": 19.3,
+      "place_r3": 19.8,
+      "wide_12": 2.6,
+      "wide_23": 3.0,
+      "wide_13": 2.8
+    },
+    {
+      "name": "Fatigue Index",
+      "n": 9155,
+      "spearman": -0.3873,
+      "win_r1": 1.8,
+      "win_r2": 2.7,
+      "win_r3": 3.5,
+      "place_r1": 7.4,
+      "place_r2": 9.4,
+      "place_r3": 12.5,
+      "wide_12": 0.5,
+      "wide_23": 1.1,
+      "wide_13": 0.8
+    }
+  ],
+  "lr_model": {
+    "auc_train": 0.8057,
+    "auc_test": 0.8097,
+    "n_train": null,
+    "n_test": null,
+    "coefficients": [
+      {
+        "feature": "log_market_prob",
+        "coef": 1.3503,
+        "starred": true,
+        "sign": "positive"
+      },
+      {
+        "feature": "speed_best",
+        "coef": 0.0843,
+        "starred": true,
+        "sign": "positive"
+      },
+      {
+        "feature": "indirect",
+        "coef": 0.0713,
+        "starred": true,
+        "sign": "positive"
+      },
+      {
+        "feature": "avg_pos_same",
+        "coef": 0.035,
+        "starred": false,
+        "sign": "positive"
+      },
+      {
+        "feature": "consistency_score",
+        "coef": 0.0324,
+        "starred": false,
+        "sign": "positive"
+      },
+      {
+        "feature": "optimal_rest_index",
+        "coef": 0.0293,
+        "starred": false,
+        "sign": "positive"
+      },
+      {
+        "feature": "momentum_index",
+        "coef": 0.0281,
+        "starred": false,
+        "sign": "positive"
+      },
+      {
+        "feature": "jockey_venue",
+        "coef": 0.0196,
+        "starred": false,
+        "sign": "positive"
+      },
+      {
+        "feature": "sectional_speed",
+        "coef": 0.0186,
+        "starred": false,
+        "sign": "positive"
+      },
+      {
+        "feature": "course_style_adv",
+        "coef": -0.0143,
+        "starred": false,
+        "sign": "negative"
+      },
+      {
+        "feature": "historical_alpha",
+        "coef": -0.0116,
+        "starred": false,
+        "sign": "negative"
+      },
+      {
+        "feature": "course_fit",
+        "coef": -0.0116,
+        "starred": false,
+        "sign": "negative"
+      },
+      {
+        "feature": "pace_fit",
+        "coef": 0.0056,
+        "starred": false,
+        "sign": "positive"
+      },
+      {
+        "feature": "distance_fit",
+        "coef": -0.0002,
+        "starred": false,
+        "sign": "negative"
+      }
+    ],
+    "weights_comparison": [
+      {
+        "feature": "avg_pos_same",
+        "current": 0.25,
+        "optimized": 0.1335,
+        "delta": -0.1165,
+        "direction": "down"
+      },
+      {
+        "feature": "distance_fit",
+        "current": 0.08,
+        "optimized": 0.0,
+        "delta": -0.08,
+        "direction": "down"
+      },
+      {
+        "feature": "historical_alpha",
+        "current": 0.18,
+        "optimized": 0.0,
+        "delta": -0.18,
+        "direction": "down"
+      },
+      {
+        "feature": "indirect",
+        "current": 0.07,
+        "optimized": 0.2715,
+        "delta": 0.2015,
+        "direction": "up"
+      },
+      {
+        "feature": "jockey_venue",
+        "current": 0.05,
+        "optimized": 0.0747,
+        "delta": 0.0247,
+        "direction": "up"
+      },
+      {
+        "feature": "momentum_index",
+        "current": 0.12,
+        "optimized": 0.1069,
+        "delta": -0.0131,
+        "direction": "down"
+      },
+      {
+        "feature": "pace_fit",
+        "current": 0.06,
+        "optimized": 0.0212,
+        "delta": -0.0388,
+        "direction": "down"
+      },
+      {
+        "feature": "sectional_speed",
+        "current": 0.04,
+        "optimized": 0.071,
+        "delta": 0.031,
+        "direction": "up"
+      },
+      {
+        "feature": "speed_best",
+        "current": 0.15,
+        "optimized": 0.3212,
+        "delta": 0.1712,
+        "direction": "up"
+      }
+    ]
+  },
+  "simulation_roi": [
+    {
+      "label": "単勝(rank<=1, 全条件)",
+      "n_bets": 9104,
+      "n_hits": 1491,
+      "win_rate_%": 16.4,
+      "total_invested": 910400,
+      "total_returned": 683400,
+      "roi_%": 75.1,
+      "avg_payout": 458.0,
+      "max_drawdown_%": 0.0,
+      "max_consecutive_loss": 45
+    },
+    {
+      "label": "単勝(rank<=1, gap>=1.5)",
+      "n_bets": 3927,
+      "n_hits": 190,
+      "win_rate_%": 4.8,
+      "total_invested": 392700,
+      "total_returned": 273250,
+      "roi_%": 69.6,
+      "avg_payout": 1438.0,
+      "max_drawdown_%": 0.0,
+      "max_consecutive_loss": 84
+    },
+    {
+      "label": "単勝(rank<=1, gap>=2.0)",
+      "n_bets": 3123,
+      "n_hits": 113,
+      "win_rate_%": 3.6,
+      "total_invested": 312300,
+      "total_returned": 207080,
+      "roi_%": 66.3,
+      "avg_payout": 1833.0,
+      "max_drawdown_%": 0.0,
+      "max_consecutive_loss": 219
+    },
+    {
+      "label": "複勝(rank<=1, 全条件)",
+      "n_bets": 9104,
+      "n_hits": 3808,
+      "win_rate_%": 41.8,
+      "total_invested": 910400,
+      "total_returned": 752500,
+      "roi_%": 82.7,
+      "avg_payout": 198.0,
+      "max_drawdown_%": 57.1,
+      "max_consecutive_loss": 19
+    },
+    {
+      "label": "複勝(rank<=1, gap>=1.5)",
+      "n_bets": 3927,
+      "n_hits": 828,
+      "win_rate_%": 21.1,
+      "total_invested": 392700,
+      "total_returned": 307870,
+      "roi_%": 78.4,
+      "avg_payout": 372.0,
+      "max_drawdown_%": 66.7,
+      "max_consecutive_loss": 29
+    },
+    {
+      "label": "ワイド(rank<=2)",
+      "n_bets": 9104,
+      "n_hits": 1113,
+      "win_rate_%": 12.2,
+      "total_invested": 910400,
+      "total_returned": 641920,
+      "roi_%": 70.5,
+      "avg_payout": 577.0,
+      "max_drawdown_%": 0.0,
+      "max_consecutive_loss": 47
+    },
+    {
+      "label": "ワイド(rank<=2, gap>=1.5)",
+      "n_bets": 6559,
+      "n_hits": 446,
+      "win_rate_%": 6.8,
+      "total_invested": 655900,
+      "total_returned": 434730,
+      "roi_%": 66.3,
+      "avg_payout": 975.0,
+      "max_drawdown_%": 0.0,
+      "max_consecutive_loss": 82
+    }
+  ],
+  "odds_gap_bins": [
+    {
+      "odds_gap_bin": "<1.0",
+      "n_horses": 3879,
+      "n_races": 3879,
+      "win_rate_%": 29.1,
+      "place_rate_%": 62.5,
+      "avg_market_odds": 3.4,
+      "roi_tansho_%": 78.9,
+      "roi_fukusho_%": 86.9
+    },
+    {
+      "odds_gap_bin": "1.0-1.4",
+      "n_horses": 1298,
+      "n_races": 1298,
+      "win_rate_%": 13.4,
+      "place_rate_%": 42.7,
+      "avg_market_odds": 6.8,
+      "roi_tansho_%": 80.1,
+      "roi_fukusho_%": 82.9
+    },
+    {
+      "odds_gap_bin": "1.5-1.9",
+      "n_horses": 804,
+      "n_races": 804,
+      "win_rate_%": 9.6,
+      "place_rate_%": 34.7,
+      "avg_market_odds": 9.7,
+      "roi_tansho_%": 82.3,
+      "roi_fukusho_%": 81.6
+    },
+    {
+      "odds_gap_bin": "2.0-2.9",
+      "n_horses": 826,
+      "n_races": 826,
+      "win_rate_%": 7.9,
+      "place_rate_%": 30.1,
+      "avg_market_odds": 14.0,
+      "roi_tansho_%": 93.7,
+      "roi_fukusho_%": 90.0
+    },
+    {
+      "odds_gap_bin": "3.0-4.9",
+      "n_horses": 781,
+      "n_races": 781,
+      "win_rate_%": 4.4,
+      "place_rate_%": 20.0,
+      "avg_market_odds": 22.0,
+      "roi_tansho_%": 81.3,
+      "roi_fukusho_%": 79.4
+    },
+    {
+      "odds_gap_bin": "5.0+",
+      "n_horses": 1516,
+      "n_races": 1516,
+      "win_rate_%": 1.0,
+      "place_rate_%": 9.5,
+      "avg_market_odds": 85.6,
+      "roi_tansho_%": 43.6,
+      "roi_fukusho_%": 69.8
+    }
+  ]
+}
