@@ -122,14 +122,13 @@ function _buildEntryTable(race) {
     const rating = getRating(e);
     return `
       <tr class="entry-row ${e.is_recommended ? 'recommended' : ''}"
-          data-horse="${e.horse_name}">
+          data-horse="${_esc(e.horse_name)}"
+          style="cursor:pointer"
+          title="クリックでカバレッジレポートを表示">
         <td><span class="${numCls}">${e.horse_number ?? '?'}</span></td>
         <td>
           <div style="font-weight:${e.is_recommended ? 700 : 400};display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-            <span class="horse-name-link" style="cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(0,240,255,.4)"
-                  data-horse="${_esc(e.horse_name)}" data-race-id="${_esc(race.race_id)}">
-              ${_esc(e.horse_name)}
-            </span>
+            ${_esc(e.horse_name)}
             ${e.is_recommended ? '<span class="badge badge-cyan" style="font-size:.58rem">◆ REC</span>' : ''}
             <span class="gm-rating-badge gm-rating-${rating.cls}" style="font-size:.55rem;padding:1px 5px">${rating.arrow}&nbsp;${rating.label}</span>
           </div>
@@ -228,14 +227,16 @@ function _bindEvents(el, allRaces) {
     });
   }
 
-  // 馬名クリック → カバレッジレポートモーダル
+  // 行クリック → カバレッジレポートモーダル
   el.addEventListener('click', e => {
-    const link = e.target.closest('.horse-name-link');
-    if (!link) return;
-    e.stopPropagation();
-    const horseName = link.dataset.horse;
-    const raceId    = link.dataset.raceId;
-    const race      = allRaces.find(r => r.race_id === raceId);
+    // レースカードヘッダー（アコーディオン）のクリックは除外
+    if (e.target.closest('.race-card-header')) return;
+    const row = e.target.closest('.entry-row');
+    if (!row) return;
+    const horseName = row.dataset.horse;
+    const raceId    = row.closest('.race-card')?.dataset.raceId;
+    if (!horseName || !raceId) return;
+    const race  = allRaces.find(r => r.race_id === raceId);
     if (!race) return;
     const entry = (race.entries ?? []).find(en => en.horse_name === horseName);
     if (!entry) return;

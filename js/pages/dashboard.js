@@ -86,7 +86,7 @@ function _build(data) {
           <div class="st-line"></div>
           <span class="badge badge-amber">DECORATIVE</span>
         </div>
-        <div id="three-canvas"></div>
+        <div id="three-canvas" style="height:280px;width:100%"></div>
       </div>
       <div class="panel">
         <div class="section-title">
