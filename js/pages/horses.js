@@ -202,17 +202,12 @@ function _closeModal() {
 function _renderRadar(radar) {
   if (_chartInst) { _chartInst.destroy(); _chartInst = null; }
   const canvas = document.getElementById('hr-radar-canvas');
-  const _Chart = window.Chart;
-  if (!canvas) { console.warn('[horses] radar canvas not found'); return; }
-  if (!_Chart)  { console.warn('[horses] Chart.js not loaded');    return; }
-
-  // 固定サイズ（responsive:false）で確実に描画
-  canvas.width  = 480;
-  canvas.height = 340;
+  if (!canvas)               { console.warn('[horses] radar canvas not found'); return; }
+  if (typeof Chart === 'undefined') { console.warn('[horses] Chart not loaded'); return; }
 
   const values = RADAR_KEYS.map(k => radar[k] ?? 0);
 
-  _chartInst = new _Chart(canvas, {
+  _chartInst = new Chart(canvas.getContext('2d'), {
     type: 'radar',
     data: {
       labels: ['スピード峰値', '現在調子', '格 (Elo)', '上がり速度', '対戦品質', '安定性'],
@@ -226,7 +221,7 @@ function _renderRadar(radar) {
       }],
     },
     options: {
-      responsive: false,
+      responsive: true,
       maintainAspectRatio: false,
       scales: {
         r: {
