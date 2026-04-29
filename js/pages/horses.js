@@ -23,6 +23,8 @@ export async function renderHorses(el) {
 
 // ── ページ構造 ──────────────────────────────────────────────────────────────
 
+const DISPLAY_LIMIT = 100;
+
 function _buildPage(horses) {
   return `
     <div class="page-header">
@@ -31,6 +33,7 @@ function _buildPage(horses) {
         <div class="page-subtitle">HORSE REGISTRY // ${horses.length} HORSES // 絶対値グローバル百分位 // クリックでレーダーチャート</div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <input id="hr-search" type="text" placeholder="馬名で検索..." class="hr-search-input">
         <select id="hr-sort" class="filter-select">
           <option value="elo_raw">格・Elo順</option>
           <option value="speed_peak">スピード峰値順</option>
@@ -49,7 +52,7 @@ function _buildPage(horses) {
     </div>
 
     <div id="hr-list">
-      ${_buildRankingTable(horses, 'all', 'elo_raw')}
+      ${_buildRankingTable(horses, 'all', 'elo_raw', '')}
     </div>
 
     <!-- レーダーモーダル -->
@@ -73,22 +76,32 @@ function _buildPage(horses) {
 
 // ── ランキングテーブル ──────────────────────────────────────────────────────
 
-function _buildRankingTable(horses, ageFilter, sortKey) {
-  const filtered = _filter(horses, ageFilter);
-  const sorted   = _sort(filtered, sortKey);
+function _buildRankingTable(horses, ageFilter, sortKey, query) {
+  const filtered  = _filter(horses, ageFilter);
+  const searched  = _search(filtered, query);
+  const sorted    = _sort(searched, sortKey);
+  const isSearch  = query && query.trim().length > 0;
+  const displayed = isSearch ? sorted : sorted.slice(0, DISPLAY_LIMIT);
+  const hidden    = sorted.length - displayed.length;
 
   if (!sorted.length) {
-    return `<div class="empty-state"><div class="empty-icon">🏇</div><p>データを準備中です</p></div>`;
+    const msg = isSearch
+      ? `「${_esc(query)}」に一致する馬が見つかりません`
+      : 'データを準備中です';
+    return `<div class="empty-state"><div class="empty-icon">🏇</div><p>${msg}</p></div>`;
   }
 
-  const rows = sorted.map((h, i) => {
+  const rows = displayed.map((h, i) => {
+    const rank   = sorted.indexOf(h) + 1;
     const radar  = h.radar ?? {};
     const bars   = RADAR_KEYS.map(k => _miniBar(radar[k])).join('');
     const ageSex = [h.age != null ? `${h.age}歳` : '', h.sex ?? ''].filter(Boolean).join(' ');
-    const eloDisp = h.elo_raw != null ? `<span class="mono" style="color:var(--cyan);font-size:.78rem">${h.elo_raw}</span>` : '—';
+    const eloDisp = h.elo_raw != null
+      ? `<span class="mono" style="color:var(--cyan);font-size:.78rem">${h.elo_raw}</span>`
+      : '<span style="color:var(--text-muted);font-size:.7rem">—</span>';
     return `
       <tr class="hr-row" data-name="${_esc(h.name)}" style="cursor:pointer">
-        <td class="mono" style="color:var(--text-muted);font-size:.7rem;width:36px">#${i + 1}</td>
+        <td class="mono" style="color:var(--text-muted);font-size:.7rem;width:36px">#${rank}</td>
         <td>
           <div style="font-weight:700;font-size:.9rem">${_esc(h.name)}</div>
           <div style="font-size:.65rem;color:var(--text-muted)">${ageSex}</div>
@@ -99,6 +112,12 @@ function _buildRankingTable(horses, ageFilter, sortKey) {
       </tr>
     `;
   }).join('');
+
+  const footerHtml = hidden > 0
+    ? `<tr><td colspan="5" style="text-align:center;padding:12px;font-size:.72rem;color:var(--text-muted)">
+         上位 ${DISPLAY_LIMIT} 頭を表示中 / 残り ${hidden} 頭は馬名で検索
+       </td></tr>`
+    : '';
 
   return `
     <div class="panel" style="padding:0">
@@ -112,7 +131,7 @@ function _buildRankingTable(horses, ageFilter, sortKey) {
             <th>能力レーダー（簡易）</th>
           </tr>
         </thead>
-        <tbody>${rows}</tbody>
+        <tbody>${rows}${footerHtml}</tbody>
       </table>
     </div>
   `;
@@ -125,6 +144,12 @@ function _miniBar(pct) {
 }
 
 // ── フィルター・ソート ──────────────────────────────────────────────────────
+
+function _search(horses, query) {
+  if (!query || !query.trim()) return horses;
+  const q = query.trim().toLowerCase();
+  return horses.filter(h => h.name.toLowerCase().includes(q));
+}
 
 function _filter(horses, ageKey) {
   if (ageKey === 'all') return horses;
@@ -251,15 +276,29 @@ function _renderStatGrid(horse) {
 // ── イベント ────────────────────────────────────────────────────────────────
 
 function _bindEvents(el, allHorses) {
-  let currentAge  = 'all';
-  let currentSort = 'elo_raw';
+  let currentAge    = 'all';
+  let currentSort   = 'elo_raw';
+  let currentSearch = '';
+  let searchTimer   = null;
 
   const list = el.querySelector('#hr-list');
 
   const rerender = () => {
-    list.innerHTML = _buildRankingTable(allHorses, currentAge, currentSort);
+    list.innerHTML = _buildRankingTable(allHorses, currentAge, currentSort, currentSearch);
     _bindRowClicks(list, allHorses);
   };
+
+  // 検索
+  const searchInput = el.querySelector('#hr-search');
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        currentSearch = searchInput.value;
+        rerender();
+      }, 200);
+    });
+  }
 
   // タブ切替
   el.querySelectorAll('.hr-tab').forEach(btn => {

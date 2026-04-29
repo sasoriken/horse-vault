@@ -452,6 +452,24 @@
 .hr-tab:hover { border-color: var(--cyan); color: var(--cyan); }
 .hr-tab.active { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-dim); }
 
+/* ── 馬名鑑検索 ── */
+.hr-search-input {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  padding: 6px 12px;
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  width: 180px;
+  transition: border-color .2s;
+}
+.hr-search-input:focus {
+  outline: none;
+  border-color: var(--cyan);
+}
+.hr-search-input::placeholder { color: var(--text-muted); }
+
 /* ── 馬名鑑ミニバー ── */
 .hr-mini-bar {
   height: 4px;
