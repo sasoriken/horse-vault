@@ -431,6 +431,41 @@
 .gm-rating-hold       { color: #FFB800; background: rgba(255,184,0,.12); }
 .gm-rating-sell       { color: #FF003C; background: rgba(255,0,60,.12);  }
 
+/* ── 馬名鑑タブ ── */
+.hr-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.hr-tab {
+  padding: 5px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: .75rem;
+  cursor: pointer;
+  transition: all .2s;
+}
+.hr-tab:hover { border-color: var(--cyan); color: var(--cyan); }
+.hr-tab.active { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-dim); }
+
+/* ── 馬名鑑ミニバー ── */
+.hr-mini-bar {
+  height: 4px;
+  background: rgba(255,255,255,.06);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 3px;
+}
+.hr-mini-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width .4s;
+}
+
 /* JRA 馬番カラー */
 .hn-1  { background:#fff;    color:#000; }
 .hn-2  { background:#000;    color:#fff; border:1px solid #555; }

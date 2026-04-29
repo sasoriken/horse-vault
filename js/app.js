@@ -9,12 +9,14 @@ import { renderDashboard } from './pages/dashboard.js';
 import { renderRaceboard  } from './pages/raceboard.js';
 import { renderAnalytics  } from './pages/analytics.js';
 import { renderAudit      } from './pages/audit.js';
+import { renderHorses     } from './pages/horses.js';
 
 // ── ルート登録 ──
 registerRoute('#dashboard', renderDashboard);
 registerRoute('#raceboard', renderRaceboard);
 registerRoute('#analytics', renderAnalytics);
 registerRoute('#audit',     renderAudit);
+registerRoute('#horses',    renderHorses);
 
 // ── グローバルユーティリティ ──
 window._showPaywall = () => showToast(
