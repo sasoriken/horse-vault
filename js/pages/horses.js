@@ -185,9 +185,10 @@ function _openModal(horse) {
 
   overlay.style.display = 'flex';
   overlay.classList.remove('gm-modal-fadeout');
-  // display:none 内の canvas は getBoundingClientRect().width=0 になる。
-  // display:flex 後にレイアウトが確定するまで最大10回リトライ。
-  _scheduleRadar(horse.radar ?? {}, 0);
+  // CSS アニメーション(0.25s)完了後に描画。アニメーション中は opacity:0/scale:.97 で
+  // getBoundingClientRect が不安定になるため setTimeout で待機する。
+  const radarData = horse.radar ?? {};
+  setTimeout(() => _renderRadar(radarData), 310);
 }
 
 function _closeModal() {
@@ -198,25 +199,16 @@ function _closeModal() {
   if (_chartInst) { _chartInst.destroy(); _chartInst = null; }
 }
 
-function _scheduleRadar(radar, attempt) {
-  const wrap = document.getElementById('hr-radar-wrap');
-  if (!wrap) return;
-  const rect = wrap.getBoundingClientRect();
-  if (rect.width < 10 && attempt < 10) {
-    setTimeout(() => _scheduleRadar(radar, attempt + 1), 80);
-    return;
-  }
-  _renderRadar(radar, rect.width || 460, rect.height || 320);
-}
-
-function _renderRadar(radar, w, h) {
+function _renderRadar(radar) {
   if (_chartInst) { _chartInst.destroy(); _chartInst = null; }
   const canvas = document.getElementById('hr-radar-canvas');
   const _Chart = window.Chart;
-  if (!canvas || !_Chart) return;
+  if (!canvas) { console.warn('[horses] radar canvas not found'); return; }
+  if (!_Chart)  { console.warn('[horses] Chart.js not loaded');    return; }
 
-  canvas.width  = w;
-  canvas.height = h;
+  // 固定サイズ（responsive:false）で確実に描画
+  canvas.width  = 480;
+  canvas.height = 340;
 
   const values = RADAR_KEYS.map(k => radar[k] ?? 0);
 
@@ -234,7 +226,7 @@ function _renderRadar(radar, w, h) {
       }],
     },
     options: {
-      responsive: true,
+      responsive: false,
       maintainAspectRatio: false,
       scales: {
         r: {
