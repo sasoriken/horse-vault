@@ -183,12 +183,11 @@ function _openModal(horse) {
 
   _renderStatGrid(horse);
 
-  // 先に表示してからレイアウト確定後にチャートを描画
   overlay.style.display = 'flex';
   overlay.classList.remove('gm-modal-fadeout');
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => _renderRadar(horse.radar ?? {}));
-  });
+  // display:none 内の canvas は getBoundingClientRect().width=0 になる。
+  // display:flex 後にレイアウトが確定するまで最大10回リトライ。
+  _scheduleRadar(horse.radar ?? {}, 0);
 }
 
 function _closeModal() {
@@ -199,14 +198,29 @@ function _closeModal() {
   if (_chartInst) { _chartInst.destroy(); _chartInst = null; }
 }
 
-function _renderRadar(radar) {
+function _scheduleRadar(radar, attempt) {
+  const wrap = document.getElementById('hr-radar-wrap');
+  if (!wrap) return;
+  const rect = wrap.getBoundingClientRect();
+  if (rect.width < 10 && attempt < 10) {
+    setTimeout(() => _scheduleRadar(radar, attempt + 1), 80);
+    return;
+  }
+  _renderRadar(radar, rect.width || 460, rect.height || 320);
+}
+
+function _renderRadar(radar, w, h) {
   if (_chartInst) { _chartInst.destroy(); _chartInst = null; }
   const canvas = document.getElementById('hr-radar-canvas');
-  if (!canvas || typeof Chart === 'undefined') return;
+  const _Chart = window.Chart;
+  if (!canvas || !_Chart) return;
+
+  canvas.width  = w;
+  canvas.height = h;
 
   const values = RADAR_KEYS.map(k => radar[k] ?? 0);
 
-  _chartInst = new Chart(canvas, {
+  _chartInst = new _Chart(canvas, {
     type: 'radar',
     data: {
       labels: ['スピード峰値', '現在調子', '格 (Elo)', '上がり速度', '対戦品質', '安定性'],

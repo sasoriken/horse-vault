@@ -4,55 +4,68 @@
 
 export function initThreeScene(containerId) {
   const container = document.getElementById(containerId);
-  if (!container || typeof THREE === 'undefined') return;
+  if (!container) return;
 
   const state = { frameId: null, ro: null, renderer: null, disposed: false };
 
-  // レイアウト確定後に初期化（clientWidth が 0 のままになるのを防ぐ）
-  setTimeout(() => {
+  const _init = (attempt = 0) => {
     if (state.disposed) return;
 
-    const w = container.clientWidth || container.offsetWidth || 400;
-    const h = container.clientHeight || 280;
+    const _THREE = window.THREE;
+    if (!_THREE) {
+      console.warn('[threescene] THREE is not loaded');
+      return;
+    }
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(w, h);
+    // getBoundingClientRect() で強制レイアウト — 0 なら最大10回リトライ
+    const rect = container.getBoundingClientRect();
+    const w    = rect.width;
+    if (w < 10 && attempt < 10) {
+      setTimeout(() => _init(attempt + 1), 100);
+      return;
+    }
+
+    const finalW = w > 10 ? w : 400;
+    const finalH = 280;
+
+    let renderer;
+    try {
+      renderer = new _THREE.WebGLRenderer({ antialias: true, alpha: true });
+    } catch (e) {
+      console.warn('[threescene] WebGL unavailable:', e);
+      return;
+    }
+    renderer.setSize(finalW, finalH);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
     state.renderer = renderer;
 
-    const scene  = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
+    const scene  = new _THREE.Scene();
+    const camera = new _THREE.PerspectiveCamera(45, finalW / finalH, 0.1, 100);
     camera.position.set(0, 0, 4.5);
 
-    const geo1 = new THREE.IcosahedronGeometry(1.2, 1);
-    const mat1 = new THREE.MeshBasicMaterial({
-      color: 0x00F0FF, wireframe: true, transparent: true, opacity: 0.35,
-    });
-    const mesh1 = new THREE.Mesh(geo1, mat1);
+    const geo1 = new _THREE.IcosahedronGeometry(1.2, 1);
+    const mat1 = new _THREE.MeshBasicMaterial({ color: 0x00F0FF, wireframe: true, transparent: true, opacity: 0.35 });
+    const mesh1 = new _THREE.Mesh(geo1, mat1);
     scene.add(mesh1);
 
-    const geo2 = new THREE.OctahedronGeometry(0.65, 0);
-    const mat2 = new THREE.MeshBasicMaterial({
-      color: 0xFF003C, wireframe: true, transparent: true, opacity: 0.5,
-    });
-    const mesh2 = new THREE.Mesh(geo2, mat2);
+    const geo2 = new _THREE.OctahedronGeometry(0.65, 0);
+    const mat2 = new _THREE.MeshBasicMaterial({ color: 0xFF003C, wireframe: true, transparent: true, opacity: 0.5 });
+    const mesh2 = new _THREE.Mesh(geo2, mat2);
     scene.add(mesh2);
 
-    const geo3 = new THREE.DodecahedronGeometry(1.9, 0);
-    const mat3 = new THREE.MeshBasicMaterial({
-      color: 0x00F0FF, wireframe: true, transparent: true, opacity: 0.06,
-    });
-    const mesh3 = new THREE.Mesh(geo3, mat3);
+    const geo3 = new _THREE.DodecahedronGeometry(1.9, 0);
+    const mat3 = new _THREE.MeshBasicMaterial({ color: 0x00F0FF, wireframe: true, transparent: true, opacity: 0.06 });
+    const mesh3 = new _THREE.Mesh(geo3, mat3);
     scene.add(mesh3);
 
-    const ptGeo = new THREE.BufferGeometry();
+    const ptGeo = new _THREE.BufferGeometry();
     const count = 120;
     const positions = new Float32Array(count * 3);
     for (let i = 0; i < count * 3; i++) positions[i] = (Math.random() - 0.5) * 6;
-    ptGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const ptMat = new THREE.PointsMaterial({ color: 0x00F0FF, size: 0.02, transparent: true, opacity: 0.4 });
-    scene.add(new THREE.Points(ptGeo, ptMat));
+    ptGeo.setAttribute('position', new _THREE.BufferAttribute(positions, 3));
+    const ptMat = new _THREE.PointsMaterial({ color: 0x00F0FF, size: 0.02, transparent: true, opacity: 0.4 });
+    scene.add(new _THREE.Points(ptGeo, ptMat));
 
     const animate = () => {
       state.frameId = requestAnimationFrame(animate);
@@ -67,15 +80,18 @@ export function initThreeScene(containerId) {
     animate();
 
     const ro = new ResizeObserver(() => {
-      const nw = container.clientWidth || container.offsetWidth || 400;
-      const nh = container.clientHeight || 280;
-      renderer.setSize(nw, nh);
-      camera.aspect = nw / nh;
+      if (state.disposed) return;
+      const nw = container.getBoundingClientRect().width || finalW;
+      renderer.setSize(nw, finalH);
+      camera.aspect = nw / finalH;
       camera.updateProjectionMatrix();
     });
     ro.observe(container);
     state.ro = ro;
-  });
+  };
+
+  // 初回は 150ms 待ってからリトライ付きで起動
+  setTimeout(() => _init(0), 150);
 
   return () => {
     state.disposed = true;
