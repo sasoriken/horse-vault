@@ -3,7 +3,6 @@
  */
 import { fetchData } from '../data.js';
 
-const RADAR_LABELS = ['スピード\n峰値', '現在\n調子', '格\n(Elo)', '上がり\n速度', '対戦\n品質', '安定性'];
 const RADAR_KEYS   = ['speed_peak', 'current_form', 'class_grade', 'closing', 'quality_wins', 'consistency'];
 const RADAR_COLORS = {
   fill:   'rgba(0,240,255,0.15)',
@@ -54,23 +53,6 @@ function _buildPage(horses) {
     <div id="hr-list">
       ${_buildRankingTable(horses, 'all', 'elo_raw', '')}
     </div>
-
-    <!-- レーダーモーダル -->
-    <div id="hr-modal-overlay" class="gm-modal-overlay" style="display:none">
-      <div class="gm-modal" style="max-width:520px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-          <div>
-            <div id="hr-modal-name" style="font-size:1.2rem;font-weight:700;color:var(--cyan)"></div>
-            <div id="hr-modal-sub"  style="font-size:.75rem;color:var(--text-secondary);margin-top:2px"></div>
-          </div>
-          <button class="gm-modal-close" id="hr-modal-close">✕</button>
-        </div>
-        <div id="hr-radar-wrap" style="position:relative;height:320px;margin-bottom:20px">
-          <canvas id="hr-radar-canvas"></canvas>
-        </div>
-        <div id="hr-stat-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
-      </div>
-    </div>
   `;
 }
 
@@ -91,7 +73,7 @@ function _buildRankingTable(horses, ageFilter, sortKey, query) {
     return `<div class="empty-state"><div class="empty-icon">🏇</div><p>${msg}</p></div>`;
   }
 
-  const rows = displayed.map((h, i) => {
+  const rows = displayed.map((h) => {
     const rank   = sorted.indexOf(h) + 1;
     const radar  = h.radar ?? {};
     const bars   = RADAR_KEYS.map(k => _miniBar(radar[k])).join('');
@@ -172,52 +154,96 @@ function _sort(horses, key) {
 
 // ── レーダーモーダル ────────────────────────────────────────────────────────
 
-function _openModal(horse) {
-  const overlay = document.getElementById('hr-modal-overlay');
-  if (!overlay) return;
-
-  document.getElementById('hr-modal-name').textContent = horse.name;
+function _buildModalHtml(horse) {
   const ageSex = [horse.age != null ? `${horse.age}歳` : '', horse.sex ?? ''].filter(Boolean).join(' ');
-  document.getElementById('hr-modal-sub').textContent =
-    `${ageSex}  最終: ${horse.last_race_date ?? '—'} ${horse.last_venue ?? ''} / ${horse.last_race_name ?? ''}`;
+  const sub    = `${ageSex}  最終: ${horse.last_race_date ?? '—'} ${horse.last_venue ?? ''} / ${horse.last_race_name ?? ''}`;
+  const r      = horse.radar ?? {};
+  const ITEMS  = [
+    { label: 'スピード峰値', key: 'speed_peak',   color: 'var(--cyan)' },
+    { label: '現在調子',    key: 'current_form', color: 'var(--green)' },
+    { label: '格 (Elo)',   key: 'class_grade',  color: 'var(--amber)', raw: horse.elo_raw },
+    { label: '上がり速度',   key: 'closing',      color: 'var(--cyan)' },
+    { label: '対戦品質',    key: 'quality_wins', color: 'var(--green)' },
+    { label: '安定性',      key: 'consistency',  color: 'var(--amber)' },
+  ];
+  const statHtml = ITEMS.map(item => {
+    const pct     = r[item.key];
+    const display = pct != null ? `${pct}<span style="font-size:.6rem">%ile</span>` : '—';
+    const rawLine = item.raw != null ? `<div style="font-size:.6rem;color:var(--text-muted)">Elo ${item.raw}</div>` : '';
+    return `
+      <div style="background:rgba(255,255,255,.04);border-radius:var(--radius);padding:10px;text-align:center">
+        <div style="font-size:.6rem;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase">${item.label}</div>
+        <div style="font-size:1.1rem;font-weight:700;color:${item.color};font-family:var(--font-mono)">${display}</div>
+        ${rawLine}
+      </div>`;
+  }).join('');
 
-  _renderStatGrid(horse);
+  return `
+    <div class="gm-modal" style="max-width:520px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <div>
+          <div style="font-size:1.2rem;font-weight:700;color:var(--cyan)">${_esc(horse.name)}</div>
+          <div style="font-size:.75rem;color:var(--text-secondary);margin-top:2px">${_esc(sub)}</div>
+        </div>
+        <button class="gm-modal-close" id="hr-modal-close">✕</button>
+      </div>
+      <div id="hr-radar-wrap" style="position:relative;height:320px;margin-bottom:20px">
+        <canvas id="hr-radar-canvas"></canvas>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${statHtml}</div>
+    </div>
+  `;
+}
 
-  overlay.style.display = 'flex';
-  overlay.classList.remove('gm-modal-fadeout');
-  // CSS アニメーション(0.25s)完了後に描画。アニメーション中は opacity:0/scale:.97 で
-  // getBoundingClientRect が不安定になるため setTimeout で待機する。
-  const radarData = horse.radar ?? {};
-  setTimeout(() => _renderRadar(radarData), 310);
+function _openModal(horse) {
+  // 既存モーダルを削除（coverage-modal.js と同パターン）
+  document.getElementById('hr-modal-overlay')?.remove();
+  if (_chartInst) { _chartInst.destroy(); _chartInst = null; }
+
+  const overlay = document.createElement('div');
+  overlay.id        = 'hr-modal-overlay';
+  overlay.className = 'gm-modal-overlay';
+  overlay.innerHTML = _buildModalHtml(horse);
+  // .page 要素（transform アニメーション中）の外に配置して position:fixed を確保
+  document.body.appendChild(overlay);
+
+  overlay.querySelector('#hr-modal-close')?.addEventListener('click', _closeModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) _closeModal(); });
+
+  function _esc_key(e) {
+    if (e.key === 'Escape') { _closeModal(); document.removeEventListener('keydown', _esc_key); }
+  }
+  document.addEventListener('keydown', _esc_key);
+
+  requestAnimationFrame(() => _renderRadar(horse.radar ?? {}));
 }
 
 function _closeModal() {
+  if (_chartInst) { _chartInst.destroy(); _chartInst = null; }
   const overlay = document.getElementById('hr-modal-overlay');
   if (!overlay) return;
   overlay.classList.add('gm-modal-fadeout');
-  setTimeout(() => { overlay.style.display = 'none'; overlay.classList.remove('gm-modal-fadeout'); }, 260);
-  if (_chartInst) { _chartInst.destroy(); _chartInst = null; }
+  setTimeout(() => overlay.remove(), 260);
 }
 
 function _renderRadar(radar) {
   if (_chartInst) { _chartInst.destroy(); _chartInst = null; }
   const canvas = document.getElementById('hr-radar-canvas');
-  if (!canvas)               { console.warn('[horses] radar canvas not found'); return; }
+  if (!canvas)                      { console.warn('[horses] canvas not found'); return; }
   if (typeof Chart === 'undefined') { console.warn('[horses] Chart not loaded'); return; }
 
   const values = RADAR_KEYS.map(k => radar[k] ?? 0);
-
   _chartInst = new Chart(canvas.getContext('2d'), {
     type: 'radar',
     data: {
       labels: ['スピード峰値', '現在調子', '格 (Elo)', '上がり速度', '対戦品質', '安定性'],
       datasets: [{
-        data:                values,
-        backgroundColor:     RADAR_COLORS.fill,
-        borderColor:         RADAR_COLORS.stroke,
+        data:                 values,
+        backgroundColor:      RADAR_COLORS.fill,
+        borderColor:          RADAR_COLORS.stroke,
         pointBackgroundColor: RADAR_COLORS.point,
-        pointRadius:         4,
-        borderWidth:         2,
+        pointRadius:          4,
+        borderWidth:          2,
       }],
     },
     options: {
@@ -226,7 +252,7 @@ function _renderRadar(radar) {
       scales: {
         r: {
           min: 0, max: 100,
-          ticks: { display: false, stepSize: 25 },
+          ticks:      { display: false, stepSize: 25 },
           grid:       { color: 'rgba(255,255,255,0.08)' },
           angleLines: { color: 'rgba(255,255,255,0.12)' },
           pointLabels: {
@@ -238,40 +264,11 @@ function _renderRadar(radar) {
       plugins: {
         legend: { display: false },
         tooltip: {
-          callbacks: {
-            label: ctx => ` ${ctx.raw}パーセンタイル`,
-          },
+          callbacks: { label: ctx => ` ${ctx.raw}パーセンタイル` },
         },
       },
     },
   });
-}
-
-function _renderStatGrid(horse) {
-  const grid = document.getElementById('hr-stat-grid');
-  if (!grid) return;
-
-  const r = horse.radar ?? {};
-  const ITEMS = [
-    { label: 'スピード峰値',  key: 'speed_peak',   color: 'var(--cyan)' },
-    { label: '現在調子',     key: 'current_form', color: 'var(--green)' },
-    { label: '格 (Elo)',    key: 'class_grade',  color: 'var(--amber)', raw: horse.elo_raw },
-    { label: '上がり速度',    key: 'closing',      color: 'var(--cyan)' },
-    { label: '対戦品質',     key: 'quality_wins', color: 'var(--green)' },
-    { label: '安定性',       key: 'consistency',  color: 'var(--amber)' },
-  ];
-
-  grid.innerHTML = ITEMS.map(item => {
-    const pct = r[item.key];
-    const display = pct != null ? `${pct}<span style="font-size:.6rem">%ile</span>` : '—';
-    const rawLine = item.raw != null ? `<div style="font-size:.6rem;color:var(--text-muted)">Elo ${item.raw}</div>` : '';
-    return `
-      <div style="background:rgba(255,255,255,.04);border-radius:var(--radius);padding:10px;text-align:center">
-        <div style="font-size:.6rem;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase">${item.label}</div>
-        <div style="font-size:1.1rem;font-weight:700;color:${item.color};font-family:var(--font-mono)">${display}</div>
-        ${rawLine}
-      </div>`;
-  }).join('');
 }
 
 // ── イベント ────────────────────────────────────────────────────────────────
@@ -289,7 +286,6 @@ function _bindEvents(el, allHorses) {
     _bindRowClicks(list, allHorses);
   };
 
-  // 検索
   const searchInput = el.querySelector('#hr-search');
   if (searchInput) {
     searchInput.addEventListener('input', () => {
@@ -301,7 +297,6 @@ function _bindEvents(el, allHorses) {
     });
   }
 
-  // タブ切替
   el.querySelectorAll('.hr-tab').forEach(btn => {
     btn.addEventListener('click', () => {
       el.querySelectorAll('.hr-tab').forEach(b => b.classList.remove('active'));
@@ -311,7 +306,6 @@ function _bindEvents(el, allHorses) {
     });
   });
 
-  // ソート切替
   const sortSel = el.querySelector('#hr-sort');
   if (sortSel) {
     sortSel.addEventListener('change', () => {
@@ -320,14 +314,6 @@ function _bindEvents(el, allHorses) {
     });
   }
 
-  // モーダル閉じる
-  document.getElementById('hr-modal-close')?.addEventListener('click', _closeModal);
-  document.getElementById('hr-modal-overlay')?.addEventListener('click', e => {
-    if (e.target.id === 'hr-modal-overlay') _closeModal();
-  });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') _closeModal(); });
-
-  // 行クリック
   _bindRowClicks(list, allHorses);
 }
 
