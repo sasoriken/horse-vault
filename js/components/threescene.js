@@ -8,8 +8,8 @@ export function initThreeScene(containerId) {
 
   const state = { frameId: null, ro: null, renderer: null, disposed: false };
 
-  // 1フレーム待ってレイアウト確定後に初期化（clientWidth が 0 のままになるのを防ぐ）
-  requestAnimationFrame(() => {
+  // レイアウト確定後に初期化（clientWidth が 0 のままになるのを防ぐ）
+  setTimeout(() => {
     if (state.disposed) return;
 
     const w = container.clientWidth || container.offsetWidth || 400;
@@ -80,7 +80,7 @@ export function initThreeScene(containerId) {
   return () => {
     state.disposed = true;
     if (state.frameId) cancelAnimationFrame(state.frameId);
-    if (state.ro) state.ro.disconnect();
+    if (state.ro)       state.ro.disconnect();
     if (state.renderer) state.renderer.dispose();
   };
 }

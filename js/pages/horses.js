@@ -156,11 +156,14 @@ function _openModal(horse) {
   document.getElementById('hr-modal-sub').textContent =
     `${ageSex}  最終: ${horse.last_race_date ?? '—'} ${horse.last_venue ?? ''} / ${horse.last_race_name ?? ''}`;
 
-  _renderRadar(horse.radar ?? {});
   _renderStatGrid(horse);
 
+  // 先に表示してからレイアウト確定後にチャートを描画
   overlay.style.display = 'flex';
-  requestAnimationFrame(() => overlay.classList.remove('gm-modal-fadeout'));
+  overlay.classList.remove('gm-modal-fadeout');
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => _renderRadar(horse.radar ?? {}));
+  });
 }
 
 function _closeModal() {
