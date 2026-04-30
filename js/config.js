@@ -38,11 +38,35 @@ export const INDICATOR_SLOTS = {
 export const SLOT_ORDER = ['horse_ability', 'race_fit', 'form', 'jockey', 'composite'];
 
 /**
- * 難読化バイナリ移行用キーマップ（将来記入）
- * 例: KEY_MAP['h'] = 'horse_name'
- * data.js の remapKeys() で使用する。
+ * 難読化バイナリ用キーマップ: 短縮キー → フルキー
+ * export_web_data.py の _KEY_MAP_ENCODE と逆対応。
  */
-export const KEY_MAP = {};
+export const KEY_MAP = {
+  // meta
+  ga: 'generated_at', sv: 'schema_version', ch: 'commit_hash', dw: 'days_window',
+  // horse
+  nm: 'name', ag: 'age', sx: 'sex',
+  ld: 'last_race_date', lv: 'last_venue', lr: 'last_race_name',
+  er: 'elo_raw', v4: 'v4_raw', rd: 'radar',
+  // radar
+  sp: 'speed_peak', cf: 'current_form', cg: 'class_grade',
+  cl: 'closing', qw: 'quality_wins', cy: 'consistency',
+  // race
+  ri: 'race_id', dt: 'date', vn: 'venue', rn: 'race_number',
+  rm: 'race_name', rc: 'race_class', sf: 'surface',
+  di: 'distance', fs: 'field_size', co: 'condition',
+  tb: 'track_bias', nk: 'netkeiba_race_id', pf: 'payoffs', en: 'entries',
+  // entry
+  hn: 'horse_name', fn: 'frame_number', hm: 'horse_number',
+  wt: 'weight', jk: 'jockey', tn: 'trainer',
+  od: 'odds', pp: 'popularity',
+  pw: 'predicted_win_rate', pr: 'prediction_rank',
+  af: 'actual_finish', ig: 'indicators',
+  // indicator categories
+  ha: 'horse_ability', rf: 'race_fit', fm: 'form', cp: 'composite',
+  // indicator object fields
+  lb: 'label', va: 'value', nr: 'norm', ut: 'unit',
+};
 
 /** 地面タイプ表示名 */
 export const SURFACE_LABELS = {
