@@ -1,0 +1,3 @@
+# デバッグ用の生成物（公開しない）
+data/*.debug
+data/*.json.debug
